@@ -3,14 +3,9 @@
 PLAYLISTURL=$1
 BATCHSIZE=5
 
-if ! command -v jq &> /dev/null; then
-    echo "Installing Dependency: jq"
-    curl -L -o /usr/bin/jq.exe https://github.com/stedolan/jq/releases/latest/download/jq-win64.exe
-fi
-
-if ! command -v yt-dlp &> /dev/null; then
-    echo "Installing Dependency: yt-dlp"
-    curl -L -o /usr/bin/yt-dlp.ext https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe
+if (! command -v jq &> /dev/null) || (! command -v yt-dlp &> /dev/null) || (! command -v aria2c &> /dev/null); then
+    echo "Missing Dependencies. Please run installdeps.sh"
+    exit 1
 fi
 
 PLAYLISTLEN="$(yt-dlp --flat-playlist --dump-single-json "$PLAYLISTURL" | jq '.entries | length' )"

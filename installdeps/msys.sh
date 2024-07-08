@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+# msys - Git For Windows
+
 if ! command -v jq &> /dev/null; then
     echo "Installing Dependency: jq"
     curl -L -o /usr/bin/jq.exe https://github.com/stedolan/jq/releases/latest/download/jq-win64.exe

@@ -46,7 +46,7 @@ while true; do
     esac
 done
 
-if [[ $# -ne 1 ]]; then
+if [[ $# -ne 1 ]] || [[ -n $1 ]]; then
     echo "Playlist URL Required."
     exit 4
 fi
@@ -70,7 +70,7 @@ PLAYLISTURL=$1
 OUTPUT=${OUTPUT%"/"}
 
 if (! command -v jq &> /dev/null) || (! command -v yt-dlp &> /dev/null) || (! command -v aria2c &> /dev/null); then
-    echo "Missing Dependencies. Please run installdeps.sh"
+    echo "Missing Dependencies. Please run ./installdeps/$OSTYPE.sh"
     exit 1
 fi
 

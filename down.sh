@@ -3,9 +3,7 @@ set -o errexit -o pipefail -o noclobber -o nounset
 
 # === Argument Parsing & Checks ===
 
-
-# ignore errexit with `&& true`
-getopt --test > /dev/null && true
+getopt --test > /dev/null && true # ignore errexit with `&& true`
 if [[ $? -ne 4 ]]; then
     echo "Argument Parse Error."
     exit 1
@@ -46,7 +44,7 @@ while true; do
     esac
 done
 
-if [[ $# -ne 1 ]] || [[ -n $1 ]]; then
+if [[ $# -ne 1 ]] || [[ -z $1 ]]; then
     echo "Playlist URL Required."
     exit 4
 fi

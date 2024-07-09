@@ -82,8 +82,6 @@ PLAYLISTLEN=${#PLAYLISTITEMS[@]}
 
 for i in "${!PLAYLISTITEMS[@]}"; do
     ITEM=${PLAYLISTITEMS[i]}
-    
-
     str="Downloading [$i/$PLAYLISTLEN ($((100*i/PLAYLISTLEN))%)].."
     if [ $(( i % BATCHSIZE )) == 0 ]; then
         read -r -p "$str [Enter to continue]"; #wait for input

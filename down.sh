@@ -32,7 +32,7 @@ Command options:
   -a              \tAdditive, downloads
   -s              \tSubtractive, deletes
   -o, --output dir\tset final file destination
-  -n n            \tset number of songs to attempt downloading
+  -n n            \tset number of songs to attempt downloading (-1 to disable)
   -h, --help      \tprints this message.
 
 Default options: -n 25 -o ./media"
@@ -104,7 +104,7 @@ if $ADDITIVE; then
     PLAYLISTLEN=${#PLAYLISTITEMS[@]}
 
     for i in "${!PLAYLISTITEMS[@]}"; do
-        if [ "$i" -gt "$LIMIT" ]; then break; fi
+        if [ "$LIMIT" -ge 0 ] && [ "$i" -gt "$LIMIT" ]; then break; fi
         id=${PLAYLISTITEMS[i]}
         dfile="./inprog/$id.description"
         afile="$id.m4a"

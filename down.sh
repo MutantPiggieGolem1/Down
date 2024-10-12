@@ -156,7 +156,7 @@ if $SUBTRACTIVE; then
         id="${id%.*}"
 
         # shellcheck disable=SC2076
-        if [[ ! " ${PLAYLISTITEMS[*]} " =~ " ${id} " ]]; then
+        if [[ ! "$id" == "EXT_"* ]] && [[ ! " ${PLAYLISTITEMS[*]} " =~ " ${id} " ]]; then
             rm "$item"
             printf "\r\033[KDeleting %s.m4a\n" "$id"
         fi

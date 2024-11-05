@@ -95,7 +95,7 @@ fi
 
 # === Operation ===
 
-echo "" > "./inprog/log"
+echo "" >| "./inprog/log"
 printf "Fetching Info.."
 
 # shellcheck disable=SC2207

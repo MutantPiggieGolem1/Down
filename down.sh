@@ -3,7 +3,7 @@ set -o errexit -o pipefail -o noclobber -o nounset
 
 # === Argument Parsing & Checks ===
 
-getopt --test > /dev/null && true # ignore errexit with `&& true`
+getopt --test > /dev/null && true # ignore errexit
 if [[ $? -ne 4 ]]; then
     echo "Argument Parse Error."
     exit 1
@@ -22,7 +22,7 @@ OUTPUT="$HOME/Music"
 while true; do
     case "$1" in
         -h|--help)
-            printf "down - YT Playlist Downloader & Metadata Extractor [version 1.0.0]
+            printf "down - YT Playlist Downloader & Metadata Extractor [version 2.0.0]
 
 Usage:\tdown <playlist id> [options]
 
@@ -51,8 +51,8 @@ Command options:
     esac
 done
 
-if (! command -v yt-dlp &> /dev/null) || (! command -v aria2c &> /dev/null); then
-    echo "Missing Dependencies. [yt-dlp, aria2]"
+if (! command -v jq &> /dev/null) || (! command -v yt-dlp &> /dev/null) || (! command -v aria2c &> /dev/null); then
+    echo "Missing Dependencies. [jq, yt-dlp, aria2]"
     exit 1
 fi
 
@@ -69,9 +69,14 @@ fi
 
 # === Operation ===
 printf "Downloading.."
-yt-dlp "https://www.youtube.com/playlist?list=$1" --no-warnings -q --progress \
-    --add-metadata --embed-thumbnail -o "$OUTPUT/%(id)s.%(ext)s" \
-    -f "m4a/bestaudio/best" -x --audio-quality 0 --audio-format m4a \
+# note: the +l flag is not in mainline yt-dlp yet
+yt-dlp "https://www.youtube.com/playlist?list=$1" --no-warnings --progress \
+    -o "$OUTPUT/%(id)s.%(ext)s" -f "m4a/bestaudio/best" -x --audio-quality 0 --audio-format m4a \
+    --embed-metadata --output-na-placeholder "Unknown" \
+        --parse-metadata "release_date:%(meta_date)s" \
+        --parse-metadata "%(artists.0)s:%(meta_artist)s" \
+        --parse-metadata "%(artists)+l:%(meta_artists)s" \
+    --embed-thumbnail --ppa "EmbedThumbnail+ffmpeg: -c:v mjpeg -vf crop=\"'if(gt(ih,iw),iw,ih)':'if(gt(iw,ih),ih,iw)'\"" \
     -N 4 --external-downloader aria2c --external-downloader-args '--max-connection-per-server=16' \
     --no-overwrites -I ":$LIMIT" --lazy-playlist;
 

@@ -17,7 +17,7 @@ PARSED=$(getopt --options=n:o:has --longoptions=output:,help --name "$0" -- "$@"
 eval set -- "$PARSED"
 
 LIMIT="-1"
-OUTPUT="~/Music"
+OUTPUT="$HOME/Music"
 
 while true; do
     case "$1" in
@@ -54,7 +54,7 @@ Default options: -n 25 -o ./media"
 done
 
 if (! command -v yt-dlp &> /dev/null) || (! command -v aria2c &> /dev/null); then
-    echo "Missing Dependencies."
+    echo "Missing Dependencies. [yt-dlp, aria2]"
     exit 1
 fi
 

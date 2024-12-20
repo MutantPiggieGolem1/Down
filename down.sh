@@ -29,9 +29,7 @@ Usage:\tdown <playlist id> [options]
 Command options:
   -o, --output dir\tset final file destination (Default ~/Music)
   -n n            \tset number of songs to attempt downloading (Default -1)
-  -h, --help      \tprints this message.
-
-Default options: -n 25 -o ./media"
+  -h, --help      \tprints this message."
             exit 0
             ;;
         -o|--output)
@@ -71,11 +69,11 @@ fi
 
 # === Operation ===
 printf "Downloading.."
-yt-dlp -f "m4a/bestaudio/best" "https://www.youtube.com/playlist?list=$1" --no-warnings -q --progress \
-    --add-metadata --write-thumbnail -o "$OUTPUT/%(id)s.%(ext)s" \
-    --external-downloader aria2c --external-downloader-args '--max-connection-per-server=16' -N 4 \
-    -x --audio-quality 0 --audio-format m4a \
-    ---no-overwrites -I ":$LIMIT" --lazy-playlist;
+yt-dlp "https://www.youtube.com/playlist?list=$1" --no-warnings -q --progress \
+    --add-metadata --embed-thumbnail -o "$OUTPUT/%(id)s.%(ext)s" \
+    -f "m4a/bestaudio/best" -x --audio-quality 0 --audio-format m4a \
+    -N 4 --external-downloader aria2c --external-downloader-args '--max-connection-per-server=16' \
+    --no-overwrites -I ":$LIMIT" --lazy-playlist;
 
 printf "\r\033[KScanning [?/? (?%%)].."
 

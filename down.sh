@@ -103,4 +103,4 @@ for i in "${!DIRITEMS[@]}"; do
     fi
     printf "\r\033[KScanning [%s/%s (%s%%)].." "$((i+1))" "$DIRLEN" "$((100*(i+1)/DIRLEN))"
 done
-printf "\r\033[KScanning Complete!\n"
+printf "\r\033[KScanning [%s/%s (100%%)]: Complete!\n" "$DIRLEN" "$DIRLEN"

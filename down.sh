@@ -13,7 +13,7 @@ fi
 # -activate quoting/enhanced mode (e.g. by writing out “--options”)
 # -pass arguments only via   -- "$@"   to separate them correctly
 # -if getopt fails, it complains itself to stdout
-PARSED=$(getopt --options=n:o:has --longoptions=output:,help --name "$0" -- "$@") || exit 2
+PARSED=$(getopt --options=n:o:h --longoptions=output:,help --name "$0" -- "$@") || exit 2
 eval set -- "$PARSED"
 
 LIMIT="-1"
@@ -67,16 +67,18 @@ if ! [ -w "$OUTPUT" ]; then
     exit 4
 fi
 
+PLAYLISTURL="https://www.youtube.com/playlist?list=$1"
+
 # === Operation ===
 printf "Downloading.."
-# note: the +l flag is not in mainline yt-dlp yet
-yt-dlp "https://www.youtube.com/playlist?list=$1" --no-warnings --progress \
+# note: the + modifier for the l flag is not in mainline yt-dlp yet
+yt-dlp "$PLAYLISTURL" --no-warnings --progress \
     -o "$OUTPUT/%(id)s.%(ext)s" -f "m4a/bestaudio/best" -x --audio-quality 0 --audio-format m4a \
     --embed-metadata --output-na-placeholder "Unknown" \
         --parse-metadata "release_date:%(meta_date)s" \
         --parse-metadata "%(artists.0)s:%(meta_artist)s" \
         --parse-metadata "%(artists)+l:%(meta_artists)s" \
-    --embed-thumbnail --ppa "EmbedThumbnail+ffmpeg: -c:v mjpeg -vf crop=\"'if(gt(ih,iw),iw,ih)':'if(gt(iw,ih),ih,iw)'\"" \
+    --embed-thumbnail --ppa "ffmpeg: -c:v mjpeg -vf crop=\"'if(gt(ih,iw),iw,ih)':'if(gt(iw,ih),ih,iw)'\"" \
     -N 4 --external-downloader aria2c --external-downloader-args '--max-connection-per-server=16' \
     --no-overwrites -I ":$LIMIT" --lazy-playlist;
 

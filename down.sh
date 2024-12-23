@@ -76,8 +76,7 @@ yt-dlp "$PLAYLISTURL" --no-warnings --progress \
     -o "$OUTPUT/%(id)s.%(ext)s" -f "m4a/bestaudio/best" -x --audio-quality 0 --audio-format m4a \
     --embed-metadata --output-na-placeholder "Unknown" \
         --parse-metadata "release_date:%(meta_date)s" \
-        --parse-metadata "%(artists.0)s:%(meta_artist)s" \
-        --parse-metadata "%(artists)+l:%(meta_artists)s" \
+        --parse-metadata "%(artists)+l:%(meta_artist)s" \
     --embed-thumbnail --ppa "ffmpeg: -c:v mjpeg -vf crop=\"'if(gt(ih,iw),iw,ih)':'if(gt(iw,ih),ih,iw)'\"" \
     -N 4 --external-downloader aria2c --external-downloader-args '--max-connection-per-server=16' \
     --no-overwrites -I ":$LIMIT" --lazy-playlist;

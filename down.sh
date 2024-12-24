@@ -69,14 +69,16 @@ fi
 
 PLAYLISTURL="https://www.youtube.com/playlist?list=$1"
 
-printf "Scanning [?/? (?%%)].."
-echo "" >| "$OUTPUT/archive.txt"
-
+printf "Fetching Info.."
 # shellcheck disable=SC2207
 PLAYLISTITEMS=($(yt-dlp --flat-playlist --dump-single-json "$PLAYLISTURL" | jq -cr '.entries | map(.id) | join(" ")'))
+printf "\r\033[KFetching Info: Complete!\n"
+
+printf "\r\033[KScanning [?/? (?%%)].."
+echo "" >| "$OUTPUT/archive.txt"
+
 DIRITEMS=("$OUTPUT"/*.m4a)
 DIRLEN=${#DIRITEMS[@]}
-
 for i in "${!DIRITEMS[@]}"; do
     item=${DIRITEMS[i]}
     if ! [ -f "$item" ]; then continue; fi
@@ -99,7 +101,7 @@ printf "\r\033[KScanning [%s/%s (100%%)]: Complete!\n" "$DIRLEN" "$DIRLEN"
 # === Operation ===
 printf "\r\033[KDownloading [?/?].."
 # note: the + modifier for the l flag is not in mainline yt-dlp yet
-yt-dlp "$PLAYLISTURL" --no-warnings -O "\r\033[KDownloading [%(playlist_index)s/%(playlist_count)s].." \
+yt-dlp "$PLAYLISTURL" --no-warnings --progress -O "Downloading [%(playlist_index)s/%(playlist_count)s].." \
     --sleep-requests 1.25 --min-sleep-interval 60 --max-sleep-interval 90 \
     -o "$OUTPUT/%(id)s.%(ext)s" -f "m4a/bestaudio/best" -x --audio-quality 0 --audio-format m4a \
     --embed-metadata --output-na-placeholder "Unknown" \

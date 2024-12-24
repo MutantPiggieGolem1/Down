@@ -102,7 +102,7 @@ printf "\r\033[KScanning [%s/%s (100%%)]: Complete!\n" "$DIRLEN" "$DIRLEN"
 printf "\r\033[KDownloading [?/?].."
 # note: the + modifier for the l flag is not in mainline yt-dlp yet
 yt-dlp "$PLAYLISTURL" --no-warnings --progress -O "Downloading [%(playlist_index)s/%(playlist_count)s].." \
-    --sleep-requests 1.25 --min-sleep-interval 60 --max-sleep-interval 90 \
+    # --sleep-requests 1.25 --min-sleep-interval 60 --max-sleep-interval 90 \
     -o "$OUTPUT/%(id)s.%(ext)s" -f "m4a/bestaudio/best" -x --audio-quality 0 --audio-format m4a \
     --embed-metadata --output-na-placeholder "Unknown" \
         --parse-metadata "release_date:%(meta_date)s" \

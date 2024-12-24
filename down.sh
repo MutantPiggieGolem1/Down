@@ -69,19 +69,8 @@ fi
 
 PLAYLISTURL="https://www.youtube.com/playlist?list=$1"
 
-# === Operation ===
-printf "Downloading.."
-# note: the + modifier for the l flag is not in mainline yt-dlp yet
-yt-dlp "$PLAYLISTURL" --no-warnings --progress \
-    -o "$OUTPUT/%(id)s.%(ext)s" -f "m4a/bestaudio/best" -x --audio-quality 0 --audio-format m4a \
-    --embed-metadata --output-na-placeholder "Unknown" \
-        --parse-metadata "release_date:%(meta_date)s" \
-        --parse-metadata "%(artists)+l:%(meta_artist)s" \
-    --embed-thumbnail --ppa "ffmpeg: -c:v mjpeg -vf crop=\"'if(gt(ih,iw),iw,ih)':'if(gt(iw,ih),ih,iw)'\"" \
-    -N 4 --external-downloader aria2c --external-downloader-args '--max-connection-per-server=16' \
-    --no-overwrites -I ":$LIMIT" --lazy-playlist;
-
-printf "\r\033[KScanning [?/? (?%%)].."
+printf "Scanning [?/? (?%%)].."
+echo "" >| "$OUTPUT/archive.txt"
 
 # shellcheck disable=SC2207
 PLAYLISTITEMS=($(yt-dlp --flat-playlist --dump-single-json "$PLAYLISTURL" | jq -cr '.entries | map(.id) | join(" ")'))
@@ -95,11 +84,29 @@ for i in "${!DIRITEMS[@]}"; do
     id="${id##*/}"
     id="${id%.*}"
 
+    printf "\r\033[KScanning [%s/%s (%s%%)].." "$((i+1))" "$DIRLEN" "$((100*(i+1)/DIRLEN))"
+    
     # shellcheck disable=SC2076
     if [[ ! "$id" == "EXT_"* ]] && [[ ! " ${PLAYLISTITEMS[*]} " =~ " ${id} " ]]; then
         rm "$item"
         printf "\r\033[KDeleting %s.m4a\n" "$id"
+    else
+        echo "$id" >> "$OUTPUT/archive.txt"
     fi
-    printf "\r\033[KScanning [%s/%s (%s%%)].." "$((i+1))" "$DIRLEN" "$((100*(i+1)/DIRLEN))"
 done
 printf "\r\033[KScanning [%s/%s (100%%)]: Complete!\n" "$DIRLEN" "$DIRLEN"
+
+# === Operation ===
+printf "\r\033[KDownloading [?/?].."
+# note: the + modifier for the l flag is not in mainline yt-dlp yet
+yt-dlp "$PLAYLISTURL" --no-warnings -O "\r\033[KDownloading [%(playlist_index)s/%(playlist_count)s].." \
+    --sleep-requests 1.25 --min-sleep-interval 60 --max-sleep-interval 90 \
+    -o "$OUTPUT/%(id)s.%(ext)s" -f "m4a/bestaudio/best" -x --audio-quality 0 --audio-format m4a \
+    --embed-metadata --output-na-placeholder "Unknown" \
+        --parse-metadata "release_date:%(meta_date)s" \
+        --parse-metadata "%(artists)+l:%(meta_artist)s" \
+    --embed-thumbnail --ppa "ffmpeg: -c:v mjpeg -vf crop=\"'if(gt(ih,iw),iw,ih)':'if(gt(iw,ih),ih,iw)'\"" \
+    -N 4 --external-downloader aria2c --external-downloader-args '--max-connection-per-server=16' \
+    --no-overwrites --download-archive "$OUTPUT/archive.txt" -I ":$LIMIT" --lazy-playlist;
+
+printf "\r\033[KDownloading: Complete!\n"

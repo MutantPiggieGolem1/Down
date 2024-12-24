@@ -22,7 +22,7 @@ OUTPUT="$HOME/Music"
 while true; do
     case "$1" in
         -h|--help)
-            printf "down - YT Playlist Downloader & Metadata Extractor [version 2.0.0]
+            printf "down - YT Playlist Synchronizer
 
 Usage:\tdown <playlist id> [options]
 
@@ -87,13 +87,13 @@ for i in "${!DIRITEMS[@]}"; do
     id="${id%.*}"
 
     printf "\r\033[KScanning [%s/%s (%s%%)].." "$((i+1))" "$DIRLEN" "$((100*(i+1)/DIRLEN))"
-    
+
     # shellcheck disable=SC2076
     if [[ ! "$id" == "EXT_"* ]] && [[ ! " ${PLAYLISTITEMS[*]} " =~ " ${id} " ]]; then
         rm "$item"
         printf "\r\033[KDeleting %s.m4a\n" "$id"
     else
-        echo "$id" >> "$OUTPUT/archive.txt"
+        echo "youtube $id" >> "$OUTPUT/archive.txt"
     fi
 done
 printf "\r\033[KScanning [%s/%s (100%%)]: Complete!\n" "$DIRLEN" "$DIRLEN"
@@ -101,13 +101,13 @@ printf "\r\033[KScanning [%s/%s (100%%)]: Complete!\n" "$DIRLEN" "$DIRLEN"
 # === Operation ===
 printf "\r\033[KDownloading [?/?].."
 # note: the + modifier for the l flag is not in mainline yt-dlp yet
-yt-dlp "$PLAYLISTURL" --no-warnings --progress -O "Downloading [%(playlist_index)s/%(playlist_count)s].." \
+yt-dlp "$PLAYLISTURL" --no-warnings -O "Downloading [%(playlist_index)s/%(playlist_count)s].." --no-quiet \
+    --no-overwrites --download-archive "$OUTPUT/archive.txt" -I ":$LIMIT" --lazy-playlist \
     -o "$OUTPUT/%(id)s.%(ext)s" -f "m4a/bestaudio/best" -x --audio-quality 0 --audio-format m4a \
     --embed-metadata --output-na-placeholder "Unknown" \
         --parse-metadata "release_date:%(meta_date)s" \
         --parse-metadata "%(artists)+l:%(meta_artist)s" \
     --embed-thumbnail --ppa "ffmpeg: -c:v mjpeg -vf crop=\"'if(gt(ih,iw),iw,ih)':'if(gt(iw,ih),ih,iw)'\"" \
-    -N 4 --external-downloader aria2c --external-downloader-args '--max-connection-per-server=16' \
-    --no-overwrites --download-archive "$OUTPUT/archive.txt" -I ":$LIMIT" --lazy-playlist;
+    -N 4 --external-downloader aria2c --external-downloader-args '--max-connection-per-server=16';
 
 printf "\r\033[KDownloading: Complete!\n"

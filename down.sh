@@ -103,6 +103,7 @@ printf "\r\033[KDownloading [?/?].."
 # note: the + modifier for the l flag is not in mainline yt-dlp yet
 yt-dlp "$PLAYLISTURL" -O "Downloading [%(playlist_index)s/%(playlist_count)s].." --no-quiet --no-simulate \
     --no-overwrites --download-archive "$OUTPUT/archive.txt" -I ":$LIMIT" --lazy-playlist \
+    --match-filters "track & artists & album" \
     -o "$OUTPUT/%(id)s.%(ext)s" -f "m4a/bestaudio/best" -x --audio-quality 0 --audio-format m4a \
     --embed-metadata --output-na-placeholder "Unknown" \
         --parse-metadata "release_date:%(meta_date)s" \

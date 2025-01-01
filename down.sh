@@ -101,7 +101,7 @@ printf "\r\033[KScanning [%s/%s (100%%)]: Complete!\n" "$DIRLEN" "$DIRLEN"
 # === Operation ===
 printf "\r\033[KDownloading [?/?].."
 # note: the + modifier for the l flag is not in mainline yt-dlp yet
-yt-dlp "$PLAYLISTURL" --no-warnings -O "Downloading [%(playlist_index)s/%(playlist_count)s].." --no-quiet \
+yt-dlp "$PLAYLISTURL" -O "Downloading [%(playlist_index)s/%(playlist_count)s].." --no-quiet --no-simulate \
     --no-overwrites --download-archive "$OUTPUT/archive.txt" -I ":$LIMIT" --lazy-playlist \
     -o "$OUTPUT/%(id)s.%(ext)s" -f "m4a/bestaudio/best" -x --audio-quality 0 --audio-format m4a \
     --embed-metadata --output-na-placeholder "Unknown" \

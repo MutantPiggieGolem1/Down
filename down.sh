@@ -111,4 +111,5 @@ yt-dlp "$PLAYLISTURL" -O "Downloading [%(playlist_index)s/%(playlist_count)s].."
     --embed-thumbnail --ppa "ffmpeg: -c:v mjpeg -vf crop=\"'if(gt(ih,iw),iw,ih)':'if(gt(iw,ih),ih,iw)'\"" \
     -N 4 --external-downloader aria2c --external-downloader-args '--max-connection-per-server=16';
 
+rm "$OUTPUT/archive.txt"
 printf "\r\033[KDownloading: Complete!\n"
